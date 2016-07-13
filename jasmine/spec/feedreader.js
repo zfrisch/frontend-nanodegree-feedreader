@@ -79,27 +79,30 @@ $(function() {
 				loadFeed(0, done);
 			});
 			
-			it('check for at least one entry', function(done) {
+			it('check for at least one entry', function() {
 				//check that the entry is defined
 				expect(entry).toBeDefined();
-				done(); //call done for asynchronous
 			});
 	});
 
 	describe('New Feed Selection', function() {
 		//to determine changes we have to have the initial state
 		//we store it when the function loads.
-		var beforeContainer = document.querySelector('.feed').innerHTML;
-		var afterContainer;
+		var beforeContainer, afterContainer;
 		
-		//set up asynchronous checking
-		afterEach(function(done) {
-			loadFeed(0, done);
+		beforeEach(function(done) {
+			loadFeed(0, function() {
+				 //after the function loads we use the callback to store the new state in a new variable
+				beforeContainer = document.querySelector('.feed').innerHTML;
+				loadFeed(1, function() {
+				//after the function loads we use the callback and store the newest state in a new variable
+				afterContainer = document.querySelector('.feed').innerHTML;
+				done();				
+				});
+			});
 		});
 
 		 it('check for content change', function(done) {
-			 //after the function loads we store the new state in a new variable
-			 afterContainer = document.querySelector('.feed').innerHTML;
 			 //by comparing the before and after state we can determine if there was a change.
 			 expect(afterContainer).not.toBe(beforeContainer);
 			 done(); //call done for asynchronous
